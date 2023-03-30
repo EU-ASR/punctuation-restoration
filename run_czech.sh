@@ -6,6 +6,14 @@
 
 set -euxo pipefail
 
+# Disable downloading pre-trained models from the `train.py`
+# (at BUT we can't access Internet from GPU nodes)
+export WANDB_DISABLED=True
+export TRANSFORMERS_OFFLINE=1
+export HF_DATASETS_OFFLINE=1
+export HF_EVALUATE_OFFLINE=1
+
+pretrained_model=xlm-mlm-100-1280
 
 # Train the model
 true && {
@@ -21,7 +29,7 @@ true && {
   # Hint: run with --epoch=0 to get scores from test-sets (no training, only if model is already trained)
   python src/train.py \
     --cuda=${cuda} \
-    --pretrained-model=xlm-roberta-base \
+    --pretrained-model=${pretrained_model} \
     --freeze-bert=False \
     --lstm-dim=-1 \
     --language=czech \
@@ -48,7 +56,7 @@ false && {
 
   python src/test.py \
     --cuda=${cuda} \
-    --pretrained-model=xlm-roberta-base \
+    --pretrained-model=${pretrained_model} \
     --weight-path=out_czech/weights.pt \
     --test-data data/cz/dev data/cz/pdtsc_test data/cz/bnc_ldc_LDC2000S89_test data/cz/bnc_ldc_LDC2004S01_test data/cz/bnc_ldc_LDC2009S02_test \
     --log-file=out_czech/punctuation-restore_test_logs.txt
@@ -59,7 +67,7 @@ false && {
 false && {
   python src/inference.py \
     --cuda=False \
-    --pretrained-model=xlm-roberta-base \
+    --pretrained-model=${pretrained_model} \
     --in-file=data/test_cz.txt \
     --weight-path=out_czech/weights.pt \
     --out-file=data/test_cz.txt.out
@@ -82,7 +90,7 @@ false && {
   # class CasePunctuator, more ready to be integrated...
   python src/inference_class.py \
     --cuda=${cuda} \
-    --pretrained-model=xlm-roberta-base \
+    --pretrained-model=${pretrained_model} \
     --weight-path=out_czech/weights.pt \
     --in-file=${in_file} \
     --out-file=${out_file}

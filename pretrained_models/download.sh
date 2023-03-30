@@ -9,12 +9,14 @@
 # Disable downloading big files (there are files we don't need)
 export GIT_LFS_SKIP_SMUDGE=1
 
+MODEL=xlm-mlm-100-1280
+
 git lfs install
-git clone https://huggingface.co/xlm-roberta-base
+git clone https://huggingface.co/${MODEL}
 
 # Download the Pytorch model
 {
-  cd xlm-roberta-base/
+  cd ${MODEL}/
   git lfs pull --include "pytorch_model.bin" # 1.1GB ...
 }
 

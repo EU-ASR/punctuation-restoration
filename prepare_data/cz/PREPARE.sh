@@ -75,11 +75,12 @@ cat src_data/*_dev >src_data/dev
 
 
 ### CONVERT DATA TO TRAINING LABELS
+out_dir=../../data/cz; mkdir -p ${out_dir}
 for dset in train dev pdtsc_test \
               bnc_ldc_LDC2000S89_test \
               bnc_ldc_LDC2004S01_test \
               bnc_ldc_LDC2009S02_test; do
-  cut -d' ' -f2- src_data/${dset} | ./prepare_labels.py >../../data/cz/${dset}
+  cut -d' ' -f2- src_data/${dset} | ./prepare_labels.py >${out_dir}/${dset}
 done
 
 
