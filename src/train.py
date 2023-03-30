@@ -23,7 +23,8 @@ torch.backends.cudnn.benchmark = False
 np.random.seed(args.seed)
 
 # tokenizer
-tokenizer = MODELS[args.pretrained_model][1].from_pretrained(args.pretrained_model)
+model_path = MODELS[args.pretrained_model][4]
+tokenizer = MODELS[args.pretrained_model][1].from_pretrained(model_path)
 augmentation.tokenizer = tokenizer
 augmentation.sub_style = args.sub_style
 augmentation.alpha_sub = args.alpha_sub
@@ -44,35 +45,20 @@ if args.language == 'english':
     test_set_asr = Dataset(os.path.join(args.data_path, 'en/test2011asr'), tokenizer=tokenizer, sequence_len=sequence_len,
                            token_style=token_style, is_train=False)
     test_set = [val_set, test_set_ref, test_set_asr]
-elif args.language == 'bangla':
-    train_set = Dataset(os.path.join(args.data_path, 'bn/train'), tokenizer=tokenizer, sequence_len=sequence_len,
+elif args.language == 'czech':
+    train_set = Dataset(os.path.join(args.data_path, 'cz/train'), tokenizer=tokenizer, sequence_len=sequence_len,
                         token_style=token_style, is_train=True, augment_rate=ar, augment_type=aug_type)
-    val_set = Dataset(os.path.join(args.data_path, 'bn/dev'), tokenizer=tokenizer, sequence_len=sequence_len,
+    val_set = Dataset(os.path.join(args.data_path, 'cz/dev'), tokenizer=tokenizer, sequence_len=sequence_len,
                       token_style=token_style, is_train=False)
-    test_set_news = Dataset(os.path.join(args.data_path, 'bn/test_news'), tokenizer=tokenizer, sequence_len=sequence_len,
+    test_set_pdtsc = Dataset(os.path.join(args.data_path, 'cz/pdtsc_test'), tokenizer=tokenizer, sequence_len=sequence_len,
                             token_style=token_style, is_train=False)
-    test_set_ref = Dataset(os.path.join(args.data_path, 'bn/test_ref'), tokenizer=tokenizer, sequence_len=sequence_len,
+    test_set_LDC2000S89 = Dataset(os.path.join(args.data_path, 'cz/bnc_ldc_LDC2000S89_test'), tokenizer=tokenizer, sequence_len=sequence_len,
                            token_style=token_style, is_train=False)
-    test_set_asr = Dataset(os.path.join(args.data_path, 'bn/test_asr'), tokenizer=tokenizer, sequence_len=sequence_len,
+    test_set_LDC2004S01 = Dataset(os.path.join(args.data_path, 'cz/bnc_ldc_LDC2004S01_test'), tokenizer=tokenizer, sequence_len=sequence_len,
                            token_style=token_style, is_train=False)
-    test_set = [val_set, test_set_news, test_set_ref, test_set_asr]
-elif args.language == 'english-bangla':
-    train_set = Dataset([os.path.join(args.data_path, 'en/train2012'), os.path.join(args.data_path, 'bn/train_bn')],
-                        tokenizer=tokenizer, sequence_len=sequence_len, token_style=token_style, is_train=True,
-                        augment_rate=ar, augment_type=aug_type)
-    val_set = Dataset([os.path.join(args.data_path, 'en/dev2012'), os.path.join(args.data_path, 'bn/dev_bn')],
-                      tokenizer=tokenizer, sequence_len=sequence_len, token_style=token_style, is_train=False)
-    test_set_ref = Dataset(os.path.join(args.data_path, 'en/test2011'), tokenizer=tokenizer, sequence_len=sequence_len,
+    test_set_LDC2009S02 = Dataset(os.path.join(args.data_path, 'cz/bnc_ldc_LDC2009S02_test'), tokenizer=tokenizer, sequence_len=sequence_len,
                            token_style=token_style, is_train=False)
-    test_set_asr = Dataset(os.path.join(args.data_path, 'en/test2011asr'), tokenizer=tokenizer, sequence_len=sequence_len,
-                           token_style=token_style, is_train=False)
-    test_set_news = Dataset(os.path.join(args.data_path, 'bn/test_news'), tokenizer=tokenizer, sequence_len=sequence_len,
-                            token_style=token_style, is_train=False)
-    test_bn_ref = Dataset(os.path.join(args.data_path, 'bn/test_ref'), tokenizer=tokenizer, sequence_len=sequence_len,
-                          token_style=token_style, is_train=False)
-    test_bn_asr = Dataset(os.path.join(args.data_path, 'bn/test_asr'), tokenizer=tokenizer, sequence_len=sequence_len,
-                          token_style=token_style, is_train=False)
-    test_set = [val_set, test_set_ref, test_set_asr, test_set_news, test_bn_ref, test_bn_asr]
+    test_set = [val_set, test_set_pdtsc, test_set_LDC2000S89, test_set_LDC2004S01, test_set_LDC2009S02]
 else:
     raise ValueError('Incorrect language argument for Dataset')
 
@@ -137,19 +123,22 @@ def validate(data_loader):
 
 def test(data_loader):
     """
-    :return: precision[numpy array], recall[numpy array], f1 score [numpy array], accuracy, confusion matrix
+    :return: label_counts[numpy array], precision[numpy array], recall[numpy array], f1 score [numpy array], accuracy, confusion matrix
     """
     num_iteration = 0
     deep_punctuation.eval()
     # +1 for overall result
-    tp = np.zeros(1+len(punctuation_dict), dtype=np.int)
-    fp = np.zeros(1+len(punctuation_dict), dtype=np.int)
-    fn = np.zeros(1+len(punctuation_dict), dtype=np.int)
-    cm = np.zeros((len(punctuation_dict), len(punctuation_dict)), dtype=np.int)
+    label_counts = np.zeros(1+len(punctuation_dict), dtype='i8')
+    tp = np.zeros(1+len(punctuation_dict), dtype='i8')
+    fp = np.zeros(1+len(punctuation_dict), dtype='i8')
+    fn = np.zeros(1+len(punctuation_dict), dtype='i8')
+    cm = np.zeros((len(punctuation_dict), len(punctuation_dict)), dtype='i8')
     correct = 0
     total = 0
+
+    dataset_name = data_loader.dataset.get_dataset_name()
     with torch.no_grad():
-        for x, y, att, y_mask in tqdm(data_loader, desc='test'):
+        for x, y, att, y_mask in tqdm(data_loader, desc=f"Test: {dataset_name}"):
             x, y, att, y_mask = x.to(device), y.to(device), att.to(device), y_mask.to(device)
             y_mask = y_mask.view(-1)
             if args.use_crf:
@@ -172,6 +161,7 @@ def test(data_loader):
                     continue
                 cor = y[i]
                 prd = y_predict[i]
+                label_counts[cor] += 1
                 if cor == prd:
                     tp[cor] += 1
                 else:
@@ -186,7 +176,7 @@ def test(data_loader):
     recall = tp/(tp+fn)
     f1 = 2 * precision * recall / (precision + recall)
 
-    return precision, recall, f1, correct/total, cm
+    return label_counts, precision, recall, f1, correct/total, cm
 
 
 def train():
@@ -246,18 +236,36 @@ def train():
 
     print('Best validation Acc:', best_val_acc)
     deep_punctuation.load_state_dict(torch.load(model_save_path))
+
     for loader in test_loaders:
-        precision, recall, f1, accuracy, cm = test(loader)
-        log = 'Precision: ' + str(precision) + '\n' + 'Recall: ' + str(recall) + '\n' + 'F1 score: ' + str(f1) + \
-              '\n' + 'Accuracy:' + str(accuracy) + '\n' + 'Confusion Matrix' + str(cm) + '\n'
+        label_counts, precision, recall, f1, accuracy, cm = test(loader)
+
+        dataset_name = loader.dataset.get_dataset_name()
+        log = f"\n\n[[ TEST_SET: {dataset_name} ]]\n\n"
+
+        # label counts in the test set:
+        log += "[ Labels: ]\n"
+        for label, count in zip(list(punctuation_dict), list(label_counts)):
+            log += f"{count:7d} {label}\n"
+        log += f"{label_counts.sum():7d} TOTAL\n\n"
+
+        # disable word-wrapping for str(numpy)
+        np.set_printoptions(linewidth=np.inf)
+
+        # per-class statistics to file
+        log += "[ PER-CLASS SCORES ]\n"
+        log += 'Precis. Recall F1_score Label\n'
+        for i in range(0, len(punctuation_dict) + 1):
+            label = list(punctuation_dict)[i] if i < len(punctuation_dict) else "TOTAL, class O,O excluded"
+            log += f"{(precision[i] * 100):6.2f} {(recall[i] * 100):6.2f} {(f1[i] * 100):6.2f} {label}\n"
+
+        log += '\nAccuracy:' + str(accuracy) + '\n\n' + \
+               '[ CONFUSION_MATRIX[corr,pred]: ]\n' + str(cm) + '\n'
+        log += '\n-----\n'
+
         print(log)
         with open(log_path, 'a') as f:
             f.write(log)
-        log_text = ''
-        for i in range(1, 5):
-            log_text += str(precision[i] * 100) + ' ' + str(recall[i] * 100) + ' ' + str(f1[i] * 100) + ' '
-        with open(log_path, 'a') as f:
-            f.write(log_text[:-1] + '\n\n')
 
 
 if __name__ == '__main__':

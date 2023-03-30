@@ -29,22 +29,42 @@ TOKEN_IDX = {
 }
 
 # 'O' -> No punctuation
-punctuation_dict = {'O': 0, 'COMMA': 1, 'PERIOD': 2, 'QUESTION': 3}
+#punctuation_dict = {'O': 0, 'COMMA': 1, 'PERIOD': 2, 'QUESTION': 3}
+
+punctuation_dict = {
+    "O,O" : 0,
+    "O,COMMA" : 1,
+    "O,PERIOD" : 2,
+    "O,QUESTION" : 3,
+    "O,EXCLAMATION" : 4,
+
+    "TitleCase,O" : 5,
+    "TitleCase,COMMA" : 6,
+    "TitleCase,PERIOD" : 7,
+    "TitleCase,QUESTION" : 8,
+    "TitleCase,EXCLAMATION" : 9,
+
+    "ALL_CAPS,O" : 10,
+    "ALL_CAPS,COMMA" : 11,
+    "ALL_CAPS,PERIOD" : 12,
+    "ALL_CAPS,QUESTION" : 13,
+    "ALL_CAPS,EXCLAMATION" : 14,
+}
 
 
 # pretrained model name: (model class, model tokenizer, output dimension, token style)
 MODELS = {
     'bert-base-uncased': (BertModel, BertTokenizer, 768, 'bert'),
     'bert-large-uncased': (BertModel, BertTokenizer, 1024, 'bert'),
-    'bert-base-multilingual-cased': (BertModel, BertTokenizer, 768, 'bert'),
+    'bert-base-multilingual-cased': (BertModel, BertTokenizer, 768, 'bert'), # multilingual BERT (Wikipedia)
     'bert-base-multilingual-uncased': (BertModel, BertTokenizer, 768, 'bert'),
     'xlm-mlm-en-2048': (XLMModel, XLMTokenizer, 2048, 'xlm'),
-    'xlm-mlm-100-1280': (XLMModel, XLMTokenizer, 1280, 'xlm'),
-    'roberta-base': (RobertaModel, RobertaTokenizer, 768, 'roberta'),
+    'xlm-mlm-100-1280': (XLMModel, XLMTokenizer, 1280, 'xlm'), # multilingual LM (Wikipedia),
+    'roberta-base': (RobertaModel, RobertaTokenizer, 768, 'roberta', "/mnt/matylda5/iveselyk/EU-ASR_TENDER/PUNCTUATION/czech/punctuation-restoration/pretrained_models/roberta-base"),
     'roberta-large': (RobertaModel, RobertaTokenizer, 1024, 'roberta'),
     'distilbert-base-uncased': (DistilBertModel, DistilBertTokenizer, 768, 'bert'),
     'distilbert-base-multilingual-cased': (DistilBertModel, DistilBertTokenizer, 768, 'bert'),
-    'xlm-roberta-base': (XLMRobertaModel, XLMRobertaTokenizer, 768, 'roberta'),
+    'xlm-roberta-base': (XLMRobertaModel, XLMRobertaTokenizer, 768, 'roberta', "/mnt/matylda5/iveselyk/EU-ASR_TENDER/PUNCTUATION/czech/punctuation-restoration/pretrained_models/xlm-roberta-base"), # multilingual BERT (2.5TB of CommonCrawl),
     'xlm-roberta-large': (XLMRobertaModel, XLMRobertaTokenizer, 1024, 'roberta'),
     'albert-base-v1': (AlbertModel, AlbertTokenizer, 768, 'albert'),
     'albert-base-v2': (AlbertModel, AlbertTokenizer, 768, 'albert'),

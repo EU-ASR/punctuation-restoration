@@ -69,17 +69,24 @@ class Dataset(torch.utils.data.Dataset):
         :param augment_rate: token augmentation rate when preparing data
         :param is_train: if false do not apply augmentation
         """
+
         if isinstance(files, list):
             self.data = []
             for file in files:
                 self.data += parse_data(file, tokenizer, sequence_len, token_style)
         else:
             self.data = parse_data(files, tokenizer, sequence_len, token_style)
+        # keep filename/s for log...
+        self.dataset_name = str(files)
+
         self.sequence_len = sequence_len
         self.augment_rate = augment_rate
         self.token_style = token_style
         self.is_train = is_train
         self.augment_type = augment_type
+
+    def get_dataset_name(self):
+        return self.dataset_name
 
     def __len__(self):
         return len(self.data)

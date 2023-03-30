@@ -1,5 +1,39 @@
 # Punctuation Restoration using Transformer Models
 
+This repository is a modified version BERT-based punctuation restoration
+from: `https://github.com/xashru/punctuation-restoration`.
+
+The original code was published with MIT license,
+so it is allowed to reuse it in proprietary software.
+
+
+#### Install
+
+The tool is usually installed in a separate conda environment as shown in: `INSTALL.md`.
+The conda environment gets activated with: `src/conda-activate.sh`.
+
+
+#### Training recipe
+
+First, the pre-trained model is downloaded, for example see `pretrained_models/download.sh`
+
+Next, the training data are prepared, for example see `prepare_data/cz/PREPARE.sh`
+
+The main recipe is in `run_czech.sh` (training, scoring, inference on raw text and kaldi-format transcripts)
+- The training tool selects single GPU in a multi-gpu machine with `src/free-gpu.py` and `${CUDA_VISIBLE_DEVICES}`
+- The model classes are specified in `src/config.py`
+   - The model classes represent both the case-type and punctuation, e.g. `TitleCase,PERIOD`.
+- to simplify the task for the model, the 1st word in a sentence is marked as lower-case
+
+The evaluation is with precision, recall and F1-score of each class.
+Also confusion matrix of all classes is created.
+The results are in a logfile.
+
+
+
+
+## Below is the original README.md file
+
 This repository contins official implementation of the paper [*Punctuation Restoration using Transformer Models for High-and Low-Resource Languages*](https://aclanthology.org/2020.wnut-1.18/) accepted at the EMNLP workshop [W-NUT 2020](http://noisy-text.github.io/2020/).
 
 
@@ -30,14 +64,14 @@ pip install -r requirements.txt
 ## Training
 To train punctuation restoration model with optimal parameter settings for English run the following command
 ```
-python src/train.py --cuda=True --pretrained-model=roberta-large --freeze-bert=False --lstm-dim=-1 
---language=english --seed=1 --lr=5e-6 --epoch=10 --use-crf=False --augment-type=all  --augment-rate=0.15 
+python src/train.py --cuda=True --pretrained-model=roberta-large --freeze-bert=False --lstm-dim=-1
+--language=english --seed=1 --lr=5e-6 --epoch=10 --use-crf=False --augment-type=all  --augment-rate=0.15
 --alpha-sub=0.4 --alpha-del=0.4 --data-path=data --save-path=out
 ```
 To train for Bangla the corresponding command is
 ```
-python src/train.py --cuda=True --pretrained-model=xlm-roberta-large --freeze-bert=False --lstm-dim=-1 
---language=bangla --seed=1 --lr=5e-6 --epoch=10 --use-crf=False --augment-type=all  --augment-rate=0.15 
+python src/train.py --cuda=True --pretrained-model=xlm-roberta-large --freeze-bert=False --lstm-dim=-1
+--language=bangla --seed=1 --lr=5e-6 --epoch=10 --use-crf=False --augment-type=all  --augment-rate=0.15
 --alpha-sub=0.4 --alpha-del=0.4 --data-path=data --save-path=out
 ```
 
@@ -72,37 +106,37 @@ xlm-roberta-large
 
 
 ## Pretrained Models
-You can find pretrained mdoels for RoBERTa-large model with augmentation for English [here](https://drive.google.com/file/d/17BPcnHVhpQlsOTC8LEayIFFJ7WkL00cr/view?usp=sharing)  
+You can find pretrained mdoels for RoBERTa-large model with augmentation for English [here](https://drive.google.com/file/d/17BPcnHVhpQlsOTC8LEayIFFJ7WkL00cr/view?usp=sharing)
 XLM-RoBERTa-large model with augmentation for Bangla can be found [here](https://drive.google.com/file/d/1X2udyT1XYrmCNvWtFpT_6jrWsQejGCBW/view?usp=sharing)
 
 
 
 ## Inference
-You can run inference on unprocessed text file to produce punctuated text using `inference` module. Note that if the 
-text already contains punctuation they are removed before inference. 
+You can run inference on unprocessed text file to produce punctuated text using `inference` module. Note that if the
+text already contains punctuation they are removed before inference.
 
 Example script for English:
 ```bash
-python inference.py --pretrained-model=roberta-large --weight-path=roberta-large-en.pt --language=en 
+python inference.py --pretrained-model=roberta-large --weight-path=roberta-large-en.pt --language=en
 --in-file=data/test_en.txt --out-file=data/test_en_out.txt
 ```
 This should create the text file with following output:
 ```text
-Tolkien drew on a wide array of influences including language, Christianity, mythology, including the Norse Völsunga saga, archaeology, especially at the Temple of Nodens, ancient and modern literature and personal experience. He was inspired primarily by his profession, philology. his work centred on the study of Old English literature, especially Beowulf, and he acknowledged its importance to his writings. 
+Tolkien drew on a wide array of influences including language, Christianity, mythology, including the Norse Völsunga saga, archaeology, especially at the Temple of Nodens, ancient and modern literature and personal experience. He was inspired primarily by his profession, philology. his work centred on the study of Old English literature, especially Beowulf, and he acknowledged its importance to his writings.
 ```
 
 Similarly, For Bangla
 ```bash
-python inference.py --pretrained-model=xlm-roberta-large --weight-path=xlm-roberta-large-bn.pt --language=bn  
+python inference.py --pretrained-model=xlm-roberta-large --weight-path=xlm-roberta-large-bn.pt --language=bn
 --in-file=data/test_bn.txt --out-file=data/test_bn_out.txt
 ```
 The expected output is
 ```text
-বিংশ শতাব্দীর বাংলা মননে কাজী নজরুল ইসলামের মর্যাদা ও গুরুত্ব অপরিসীম। একাধারে কবি, সাহিত্যিক, সংগীতজ্ঞ, সাংবাদিক, সম্পাদক, রাজনীতিবিদ এবং সৈনিক হিসেবে অন্যায় ও অবিচারের বিরুদ্ধে নজরুল সর্বদাই ছিলেন সোচ্চার। তার কবিতা ও গানে এই মনোভাবই প্রতিফলিত হয়েছে। অগ্নিবীণা হাতে তার প্রবেশ, ধূমকেতুর মতো তার প্রকাশ। যেমন লেখাতে বিদ্রোহী, তেমনই জীবনে কাজেই "বিদ্রোহী কবি"। তার জন্ম ও মৃত্যুবার্ষিকী বিশেষ মর্যাদার সঙ্গে উভয় বাংলাতে প্রতি বৎসর উদযাপিত হয়ে থাকে। 
+বিংশ শতাব্দীর বাংলা মননে কাজী নজরুল ইসলামের মর্যাদা ও গুরুত্ব অপরিসীম। একাধারে কবি, সাহিত্যিক, সংগীতজ্ঞ, সাংবাদিক, সম্পাদক, রাজনীতিবিদ এবং সৈনিক হিসেবে অন্যায় ও অবিচারের বিরুদ্ধে নজরুল সর্বদাই ছিলেন সোচ্চার। তার কবিতা ও গানে এই মনোভাবই প্রতিফলিত হয়েছে। অগ্নিবীণা হাতে তার প্রবেশ, ধূমকেতুর মতো তার প্রকাশ। যেমন লেখাতে বিদ্রোহী, তেমনই জীবনে কাজেই "বিদ্রোহী কবি"। তার জন্ম ও মৃত্যুবার্ষিকী বিশেষ মর্যাদার সঙ্গে উভয় বাংলাতে প্রতি বৎসর উদযাপিত হয়ে থাকে।
 ```
 
-Please note that *Comma* includes commas, colons and dashes, *Period* includes full stops, exclamation marks 
-and semicolons and *Question* is just question marks. 
+Please note that *Comma* includes commas, colons and dashes, *Period* includes full stops, exclamation marks
+and semicolons and *Question* is just question marks.
 
 
 ## Test

@@ -16,24 +16,26 @@ parser.add_argument('--lstm-dim', default=-1, type=int,
                     help='hidden dimension in LSTM layer, if -1 is set equal to hidden dimension in language model')
 parser.add_argument('--use-crf', default=False, type=lambda x: (str(x).lower() == 'true'),
                     help='whether to use CRF layer or not')
-parser.add_argument('--data-path', default='data/test', type=str, help='path to test datasets')
 parser.add_argument('--weight-path', default='out/weights.pt', type=str, help='model weight path')
 parser.add_argument('--sequence-length', default=256, type=int,
                     help='sequence length to use when preparing dataset (default 256)')
 parser.add_argument('--batch-size', default=8, type=int, help='batch size (default: 8)')
-parser.add_argument('--save-path', default='out/', type=str, help='model and log save directory')
+
+parser.add_argument('--test-data', default='data/cz/dev data/cz/pdtsc_test', type=str, nargs='+', help='files with test-set datasets')
+parser.add_argument('--log-file', default='out_czech/punctuation-restore_test_logs.txt', type=str, help='log file for output')
 
 args = parser.parse_args()
 
 
 # tokenizer
-tokenizer = MODELS[args.pretrained_model][1].from_pretrained(args.pretrained_model)
+model_path = MODELS[args.pretrained_model][4]
+tokenizer = MODELS[args.pretrained_model][1].from_pretrained(model_path)
 token_style = MODELS[args.pretrained_model][3]
 
-test_files = os.listdir(args.data_path)
 test_set = []
-for file in test_files:
-    test_set.append(Dataset(os.path.join(args.data_path, file), tokenizer=tokenizer, sequence_len=args.sequence_length,
+for test_file in args.test_data:
+    test_set.append(Dataset(test_file, tokenizer=tokenizer,
+                            sequence_len=args.sequence_length,
                             token_style=token_style, is_train=False))
 
 # Data Loaders
@@ -47,7 +49,7 @@ test_loaders = [torch.utils.data.DataLoader(x, **data_loader_params) for x in te
 
 # logs
 model_save_path = args.weight_path
-log_path = os.path.join(args.save_path, 'logs_test.txt')
+log_file = args.log_file
 
 # Model
 device = torch.device('cuda' if (args.cuda and torch.cuda.is_available()) else 'cpu')
@@ -60,19 +62,22 @@ deep_punctuation.to(device)
 
 def test(data_loader):
     """
-    :return: precision[numpy array], recall[numpy array], f1 score [numpy array], accuracy, confusion matrix
+    :return: label_counts[numpy array], precision[numpy array], recall[numpy array], f1 score [numpy array], accuracy, confusion matrix
     """
     num_iteration = 0
     deep_punctuation.eval()
     # +1 for overall result
-    tp = np.zeros(1+len(punctuation_dict), dtype=np.int)
-    fp = np.zeros(1+len(punctuation_dict), dtype=np.int)
-    fn = np.zeros(1+len(punctuation_dict), dtype=np.int)
-    cm = np.zeros((len(punctuation_dict), len(punctuation_dict)), dtype=np.int)
+    label_counts = np.zeros(1+len(punctuation_dict), dtype='i8')
+    tp = np.zeros(1+len(punctuation_dict), dtype='i8')
+    fp = np.zeros(1+len(punctuation_dict), dtype='i8')
+    fn = np.zeros(1+len(punctuation_dict), dtype='i8')
+    cm = np.zeros((len(punctuation_dict), len(punctuation_dict)), dtype='i8')
     correct = 0
     total = 0
+
+    dataset_name = data_loader.dataset.get_dataset_name()
     with torch.no_grad():
-        for x, y, att, y_mask in tqdm(data_loader, desc='test'):
+        for x, y, att, y_mask in tqdm(data_loader, desc=f"Test: {dataset_name}"):
             x, y, att, y_mask = x.to(device), y.to(device), att.to(device), y_mask.to(device)
             y_mask = y_mask.view(-1)
             if args.use_crf:
@@ -95,6 +100,7 @@ def test(data_loader):
                     continue
                 cor = y[i]
                 prd = y_predict[i]
+                label_counts[cor] += 1
                 if cor == prd:
                     tp[cor] += 1
                 else:
@@ -109,18 +115,44 @@ def test(data_loader):
     recall = tp/(tp+fn)
     f1 = 2 * precision * recall / (precision + recall)
 
-    return precision, recall, f1, correct/total, cm
+    return label_counts, precision, recall, f1, correct/total, cm
 
 
 def run():
-    deep_punctuation.load_state_dict(torch.load(model_save_path))
-    for i in range(len(test_loaders)):
-        precision, recall, f1, accuracy, cm = test(test_loaders[i])
-        log = test_files[i] + '\n' + 'Precision: ' + str(precision) + '\n' + 'Recall: ' + str(recall) + '\n' + \
-            'F1 score: ' + str(f1) + '\n' + 'Accuracy:' + str(accuracy) + '\n' + 'Confusion Matrix' + str(cm) + '\n'
+    # load model parameters
+    deep_punctuation.load_state_dict(torch.load(model_save_path, map_location=device))
+
+    # MAIN LOOP over test-set data loaders
+    for loader in test_loaders:
+        label_counts, precision, recall, f1, accuracy, cm = test(loader)
+
+        dataset_name = loader.dataset.get_dataset_name()
+        log = f"\n\n[[ TEST_SET: {dataset_name} ]]\n\n"
+
+        # label counts in the test set:
+        log += "[ Labels: ]\n"
+        for label, count in zip(list(punctuation_dict), list(label_counts)):
+            log += f"{count:7d} {label}\n"
+        log += f"{label_counts.sum():7d} TOTAL\n\n"
+
+        # disable word-wrapping for str(numpy)
+        np.set_printoptions(linewidth=np.inf)
+
+        # per-class statistics to file
+        log += "[ PER-CLASS SCORES ]\n"
+        log += 'Precis. Recall F1_score Label\n'
+        for i in range(0, len(punctuation_dict) + 1):
+            label = list(punctuation_dict)[i] if i < len(punctuation_dict) else "TOTAL, class O,O excluded"
+            log += f"{(precision[i] * 100):6.2f} {(recall[i] * 100):6.2f} {(f1[i] * 100):6.2f} {label}\n"
+
+        log += '\nAccuracy:' + str(accuracy) + '\n\n' + \
+               '[ CONFUSION_MATRIX[corr,pred]: ]\n' + str(cm) + '\n'
+        log += '\n-----\n'
+
         print(log)
-        with open(log_path, 'a') as f:
+        with open(log_file, 'a') as f:
             f.write(log)
 
 
-run()
+if __name__ == "__main__":
+    run()
