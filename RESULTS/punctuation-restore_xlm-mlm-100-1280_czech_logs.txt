@@ -1,0 +1,326 @@
+Namespace(name='punctuation-restore', cuda=True, seed=1, pretrained_model='xlm-mlm-100-1280', freeze_bert=False, lstm_dim=-1, use_crf=False, data_path='data', language='czech', sequence_length=256, augment_rate=0.15, augment_type='all', sub_style='unk', alpha_sub=0.4, alpha_del=0.4, lr=5e-06, decay=0, gradient_clip=-1, batch_size=8, epoch=10, save_path='out_czech')
+epoch: 0, Train loss: 0.26632600953181584, Train accuracy: 0.882280918274233
+epoch: 0, Val loss: 0.1829238880739034, Val accuracy: 0.9054469036043836
+epoch: 1, Train loss: 0.16093426858385404, Train accuracy: 0.9119300453883612
+epoch: 1, Val loss: 0.15730477723284303, Val accuracy: 0.9168572083971556
+epoch: 2, Train loss: 0.1417545871022675, Train accuracy: 0.9200546100324603
+epoch: 2, Val loss: 0.14661403432070652, Val accuracy: 0.9191067107687526
+epoch: 3, Train loss: 0.13589609122110738, Train accuracy: 0.9230196025838356
+epoch: 3, Val loss: 0.13837091144278785, Val accuracy: 0.921681799009923
+epoch: 4, Train loss: 0.12610305023690066, Train accuracy: 0.9271475697051165
+epoch: 4, Val loss: 0.13503267135575553, Val accuracy: 0.924530675368689
+epoch: 5, Train loss: 0.12048306446108553, Train accuracy: 0.9296474461534086
+epoch: 5, Val loss: 0.13089691770968037, Val accuracy: 0.9264397925130049
+epoch: 6, Train loss: 0.11558668971061707, Train accuracy: 0.9319589881517577
+epoch: 6, Val loss: 0.1282837380454919, Val accuracy: 0.9280455228243094
+epoch: 7, Train loss: 0.11194680444068379, Train accuracy: 0.933740491665015
+epoch: 7, Val loss: 0.12878556493843826, Val accuracy: 0.9281935164013881
+epoch: 8, Train loss: 0.10790875225431389, Train accuracy: 0.9359345364957081
+epoch: 8, Val loss: 0.12973102982913223, Val accuracy: 0.9283785083727366
+epoch: 9, Train loss: 0.10509110353887081, Train accuracy: 0.9373044374911108
+epoch: 9, Val loss: 0.12751821804547978, Val accuracy: 0.9290666785061529
+
+
+[[ TEST_SET: data/cz/dev ]]
+
+[ Labels: ]
+ 114316 O,O
+   9521 O,COMMA
+   3680 O,PERIOD
+    711 O,QUESTION
+      0 O,EXCLAMATION
+   4827 TitleCase,O
+    967 TitleCase,COMMA
+    748 TitleCase,PERIOD
+     53 TitleCase,QUESTION
+      0 TitleCase,EXCLAMATION
+    233 ALL_CAPS,O
+     47 ALL_CAPS,COMMA
+     36 ALL_CAPS,PERIOD
+      2 ALL_CAPS,QUESTION
+      0 ALL_CAPS,EXCLAMATION
+ 135141 TOTAL
+
+[ PER-CLASS SCORES ]
+Precis. Recall F1_score Label
+ 96.09  97.38  96.73 O,O
+ 69.67  63.22  66.29 O,COMMA
+ 67.67  56.41  61.53 O,PERIOD
+ 70.08  63.57  66.67 O,QUESTION
+   nan    nan    nan O,EXCLAMATION
+ 83.67  90.04  86.74 TitleCase,O
+ 75.82  57.39  65.33 TitleCase,COMMA
+ 77.13  71.26  74.08 TitleCase,PERIOD
+ 53.66  41.51  46.81 TitleCase,QUESTION
+   nan    nan    nan TitleCase,EXCLAMATION
+ 88.04  78.97  83.26 ALL_CAPS,O
+ 67.50  57.45  62.07 ALL_CAPS,COMMA
+ 67.74  58.33  62.69 ALL_CAPS,PERIOD
+   nan   0.00    nan ALL_CAPS,QUESTION
+   nan    nan    nan ALL_CAPS,EXCLAMATION
+ 73.79  68.36  70.97 TOTAL, class O,O excluded
+
+Accuracy:0.9290666785061529
+
+[ CONFUSION_MATRIX[corr,pred]: ]
+[[111320   2074    437    103      0    363     10      6      0      0      2      1      0      0      0]
+ [  2909   6019    494     57      0     19     20      2      0      0      1      0      0      0      0]
+ [  1077    472   2076     32      0      6      3     12      0      0      0      1      1      0      0]
+ [   183     32     41    452      0      2      0      0      1      0      0      0      0      0      0]
+ [     0      0      0      0      0      0      0      0      0      0      0      0      0      0      0]
+ [   304     13      0      1      0   4346     97     59      6      0      1      0      0      0      0]
+ [    29     25      6      0      0    279    555     68      5      0      0      0      0      0      0]
+ [    13      4      9      0      0    145     37    533      7      0      0      0      0      0      0]
+ [     3      0      4      0      0      8      6     10     22      0      0      0      0      0      0]
+ [     0      0      0      0      0      0      0      0      0      0      0      0      0      0      0]
+ [    13      0      0      0      0     23      0      1      0      0    184      6      6      0      0]
+ [     0      0      1      0      0      1      4      0      0      0     12     27      2      0      0]
+ [     0      0      0      0      0      2      0      0      0      0      8      5     21      0      0]
+ [     0      0      0      0      0      0      0      0      0      0      1      0      1      0      0]
+ [     0      0      0      0      0      0      0      0      0      0      0      0      0      0      0]]
+
+-----
+
+
+[[ TEST_SET: data/cz/pdtsc_test ]]
+
+[ Labels: ]
+  69251 O,O
+   6096 O,COMMA
+   1832 O,PERIOD
+    656 O,QUESTION
+      0 O,EXCLAMATION
+   1251 TitleCase,O
+    511 TitleCase,COMMA
+    220 TitleCase,PERIOD
+     27 TitleCase,QUESTION
+      0 TitleCase,EXCLAMATION
+     36 ALL_CAPS,O
+      2 ALL_CAPS,COMMA
+      6 ALL_CAPS,PERIOD
+      0 ALL_CAPS,QUESTION
+      0 ALL_CAPS,EXCLAMATION
+  79888 TOTAL
+
+[ PER-CLASS SCORES ]
+Precis. Recall F1_score Label
+ 94.51  96.98  95.73 O,O
+ 62.33  52.05  56.73 O,COMMA
+ 41.34  22.93  29.49 O,PERIOD
+ 71.72  75.00  73.32 O,QUESTION
+   nan    nan    nan O,EXCLAMATION
+ 66.49  80.42  72.79 TitleCase,O
+ 60.00  38.75  47.09 TitleCase,COMMA
+ 41.41  24.09  30.46 TitleCase,PERIOD
+ 42.86  55.56  48.39 TitleCase,QUESTION
+   nan    nan    nan TitleCase,EXCLAMATION
+ 89.47  47.22  61.82 ALL_CAPS,O
+ 14.29  50.00  22.22 ALL_CAPS,COMMA
+100.00  16.67  28.57 ALL_CAPS,PERIOD
+   nan    nan    nan ALL_CAPS,QUESTION
+   nan    nan    nan ALL_CAPS,EXCLAMATION
+ 60.91  50.54  55.24 TOTAL, class O,O excluded
+
+Accuracy:0.9079461245744042
+
+[ CONFUSION_MATRIX[corr,pred]: ]
+[[67158  1538   275   117     0   147    10     4     0     0     2     0     0     0     0]
+ [ 2561  3173   298    36     0    13    12     3     0     0     0     0     0     0     0]
+ [ 1043   323   420    36     0     7     1     2     0     0     0     0     0     0     0]
+ [  133    21     9   492     0     0     0     0     1     0     0     0     0     0     0]
+ [    0     0     0     0     0     0     0     0     0     0     0     0     0     0     0]
+ [  115     9     4     0     0  1006    81    27     9     0     0     0     0     0     0]
+ [   27    21     7     1     0   215   198    37     4     0     0     1     0     0     0]
+ [    9     4     3     1     0   117    27    53     6     0     0     0     0     0     0]
+ [    0     0     0     3     0     6     1     2    15     0     0     0     0     0     0]
+ [    0     0     0     0     0     0     0     0     0     0     0     0     0     0     0]
+ [   12     1     0     0     0     2     0     0     0     0    17     4     0     0     0]
+ [    0     1     0     0     0     0     0     0     0     0     0     1     0     0     0]
+ [    4     0     0     0     0     0     0     0     0     0     0     1     1     0     0]
+ [    0     0     0     0     0     0     0     0     0     0     0     0     0     0     0]
+ [    0     0     0     0     0     0     0     0     0     0     0     0     0     0     0]]
+
+-----
+
+
+[[ TEST_SET: data/cz/bnc_ldc_LDC2000S89_test ]]
+
+[ Labels: ]
+  12306 O,O
+    865 O,COMMA
+    697 O,PERIOD
+      6 O,QUESTION
+      0 O,EXCLAMATION
+   1019 TitleCase,O
+    180 TitleCase,COMMA
+    133 TitleCase,PERIOD
+      0 TitleCase,QUESTION
+      0 TitleCase,EXCLAMATION
+     32 ALL_CAPS,O
+     12 ALL_CAPS,COMMA
+     11 ALL_CAPS,PERIOD
+      0 ALL_CAPS,QUESTION
+      0 ALL_CAPS,EXCLAMATION
+  15261 TOTAL
+
+[ PER-CLASS SCORES ]
+Precis. Recall F1_score Label
+ 97.90  98.46  98.18 O,O
+ 84.74  76.42  80.36 O,COMMA
+ 80.82  81.64  81.23 O,PERIOD
+  0.00   0.00    nan O,QUESTION
+   nan    nan    nan O,EXCLAMATION
+ 90.04  94.01  91.98 TitleCase,O
+ 87.76  71.67  78.90 TitleCase,COMMA
+ 78.87  84.21  81.45 TitleCase,PERIOD
+   nan    nan    nan TitleCase,QUESTION
+   nan    nan    nan TitleCase,EXCLAMATION
+ 86.21  78.12  81.97 ALL_CAPS,O
+100.00  50.00  66.67 ALL_CAPS,COMMA
+ 63.64  63.64  63.64 ALL_CAPS,PERIOD
+   nan    nan    nan ALL_CAPS,QUESTION
+   nan    nan    nan ALL_CAPS,EXCLAMATION
+ 85.54  83.49  84.50 TOTAL, class O,O excluded
+
+Accuracy:0.9556385557958194
+
+[ CONFUSION_MATRIX[corr,pred]: ]
+[[12117    67    60     1     0    61     0     0     0     0     0     0     0     0     0]
+ [  136   661    67     0     0     0     1     0     0     0     0     0     0     0     0]
+ [   78    47   569     0     0     0     0     3     0     0     0     0     0     0     0]
+ [    1     0     5     0     0     0     0     0     0     0     0     0     0     0     0]
+ [    0     0     0     0     0     0     0     0     0     0     0     0     0     0     0]
+ [   38     0     1     0     0   958    14     8     0     0     0     0     0     0     0]
+ [    3     3     0     0     0    27   129    18     0     0     0     0     0     0     0]
+ [    2     1     0     0     0    15     3   112     0     0     0     0     0     0     0]
+ [    0     0     0     0     0     0     0     0     0     0     0     0     0     0     0]
+ [    0     0     0     0     0     0     0     0     0     0     0     0     0     0     0]
+ [    2     0     0     0     0     3     0     0     0     0    25     0     2     0     0]
+ [    0     1     0     0     0     0     0     0     0     0     3     6     2     0     0]
+ [    0     0     2     0     0     0     0     1     0     0     1     0     7     0     0]
+ [    0     0     0     0     0     0     0     0     0     0     0     0     0     0     0]
+ [    0     0     0     0     0     0     0     0     0     0     0     0     0     0     0]]
+
+-----
+
+
+[[ TEST_SET: data/cz/bnc_ldc_LDC2004S01_test ]]
+
+[ Labels: ]
+  14883 O,O
+    744 O,COMMA
+    951 O,PERIOD
+     14 O,QUESTION
+      0 O,EXCLAMATION
+   1679 TitleCase,O
+    141 TitleCase,COMMA
+    342 TitleCase,PERIOD
+      2 TitleCase,QUESTION
+      0 TitleCase,EXCLAMATION
+     89 ALL_CAPS,O
+     13 ALL_CAPS,COMMA
+     17 ALL_CAPS,PERIOD
+      0 ALL_CAPS,QUESTION
+      0 ALL_CAPS,EXCLAMATION
+  18875 TOTAL
+
+[ PER-CLASS SCORES ]
+Precis. Recall F1_score Label
+ 97.92  98.48  98.20 O,O
+ 85.08  72.04  78.02 O,COMMA
+ 79.84  85.38  82.52 O,PERIOD
+ 40.00  28.57  33.33 O,QUESTION
+   nan    nan    nan O,EXCLAMATION
+ 90.91  92.32  91.61 TitleCase,O
+ 88.30  58.87  70.64 TitleCase,COMMA
+ 87.79  88.30  88.05 TitleCase,PERIOD
+   nan   0.00    nan TitleCase,QUESTION
+   nan    nan    nan TitleCase,EXCLAMATION
+ 90.00  80.90  85.21 ALL_CAPS,O
+ 66.67  46.15  54.55 ALL_CAPS,COMMA
+ 82.35  82.35  82.35 ALL_CAPS,PERIOD
+   nan    nan    nan ALL_CAPS,QUESTION
+   nan    nan    nan ALL_CAPS,EXCLAMATION
+ 86.51  84.64  85.57 TOTAL, class O,O excluded
+
+Accuracy:0.9555496688741721
+
+[ CONFUSION_MATRIX[corr,pred]: ]
+[[14657    57    81     1     0    86     0     0     0     0     1     0     0     0     0]
+ [   96   536   103     2     0     3     3     1     0     0     0     0     0     0     0]
+ [  106    29   812     3     0     1     0     0     0     0     0     0     0     0     0]
+ [    2     3     5     4     0     0     0     0     0     0     0     0     0     0     0]
+ [    0     0     0     0     0     0     0     0     0     0     0     0     0     0     0]
+ [  101     1     1     0     0  1550     5    21     0     0     0     0     0     0     0]
+ [    2     3     3     0     0    32    83    18     0     0     0     0     0     0     0]
+ [    1     1    12     0     0    24     2   302     0     0     0     0     0     0     0]
+ [    0     0     0     0     0     0     0     2     0     0     0     0     0     0     0]
+ [    0     0     0     0     0     0     0     0     0     0     0     0     0     0     0]
+ [    4     0     0     0     0     9     0     0     0     0    72     2     2     0     0]
+ [    0     0     0     0     0     0     1     0     0     0     5     6     1     0     0]
+ [    0     0     0     0     0     0     0     0     0     0     2     1    14     0     0]
+ [    0     0     0     0     0     0     0     0     0     0     0     0     0     0     0]
+ [    0     0     0     0     0     0     0     0     0     0     0     0     0     0     0]]
+
+-----
+
+
+[[ TEST_SET: data/cz/bnc_ldc_LDC2009S02_test ]]
+
+[ Labels: ]
+  20762 O,O
+   2443 O,COMMA
+    959 O,PERIOD
+     96 O,QUESTION
+      0 O,EXCLAMATION
+    662 TitleCase,O
+    186 TitleCase,COMMA
+     92 TitleCase,PERIOD
+     20 TitleCase,QUESTION
+      0 TitleCase,EXCLAMATION
+     36 ALL_CAPS,O
+     12 ALL_CAPS,COMMA
+      6 ALL_CAPS,PERIOD
+      0 ALL_CAPS,QUESTION
+      0 ALL_CAPS,EXCLAMATION
+  25274 TOTAL
+
+[ PER-CLASS SCORES ]
+Precis. Recall F1_score Label
+ 97.03  98.21  97.61 O,O
+ 78.56  75.73  77.12 O,COMMA
+ 61.55  53.08  57.00 O,PERIOD
+ 66.00  34.38  45.21 O,QUESTION
+   nan    nan    nan O,EXCLAMATION
+ 86.11  94.56  90.14 TitleCase,O
+ 78.23  61.83  69.07 TitleCase,COMMA
+ 65.26  67.39  66.31 TitleCase,PERIOD
+ 70.00  35.00  46.67 TitleCase,QUESTION
+   nan    nan    nan TitleCase,EXCLAMATION
+ 92.86  72.22  81.25 ALL_CAPS,O
+ 53.85  58.33  56.00 ALL_CAPS,COMMA
+ 57.14  66.67  61.54 ALL_CAPS,PERIOD
+   nan    nan    nan ALL_CAPS,QUESTION
+   nan    nan    nan ALL_CAPS,EXCLAMATION
+ 76.05  71.79  73.86 TOTAL, class O,O excluded
+
+Accuracy:0.9349133496874258
+
+[ CONFUSION_MATRIX[corr,pred]: ]
+[[20390   228    92     4     0    46     0     0     0     0     2     0     0     0     0]
+ [  380  1850   202     5     0     1     1     2     0     0     0     2     0     0     0]
+ [  197   243   509     8     0     1     0     1     0     0     0     0     0     0     0]
+ [   20    23    20    33     0     0     0     0     0     0     0     0     0     0     0]
+ [    0     0     0     0     0     0     0     0     0     0     0     0     0     0     0]
+ [   25     1     0     0     0   626     5     5     0     0     0     0     0     0     0]
+ [    1     7     2     0     0    41   115    19     1     0     0     0     0     0     0]
+ [    0     1     1     0     0     6    20    62     2     0     0     0     0     0     0]
+ [    0     0     0     0     0     3     4     6     7     0     0     0     0     0     0]
+ [    0     0     0     0     0     0     0     0     0     0     0     0     0     0     0]
+ [    2     0     1     0     0     3     0     0     0     0    26     2     2     0     0]
+ [    0     2     0     0     0     0     2     0     0     0     0     7     1     0     0]
+ [    0     0     0     0     0     0     0     0     0     0     0     2     4     0     0]
+ [    0     0     0     0     0     0     0     0     0     0     0     0     0     0     0]
+ [    0     0     0     0     0     0     0     0     0     0     0     0     0     0     0]]
+
+-----
