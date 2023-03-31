@@ -56,15 +56,15 @@ punctuation_dict = {
 MODELS = {
     'bert-base-uncased': (BertModel, BertTokenizer, 768, 'bert'),
     'bert-large-uncased': (BertModel, BertTokenizer, 1024, 'bert'),
-    'bert-base-multilingual-cased': (BertModel, BertTokenizer, 768, 'bert', "./pretrained_models/bert-base-multilingual-cased"), # multilingual BERT (Wikipedia)
-    'bert-base-multilingual-uncased': (BertModel, BertTokenizer, 768, 'bert', "./pretrained_models/bert-base-multilingual-uncased"),
+    'bert-base-multilingual-cased': (BertModel, BertTokenizer, 768, 'bert', "./pretrained_models/bert-base-multilingual-cased"), # multilingual BERT (Wikipedia), 710MB
+    'bert-base-multilingual-uncased': (BertModel, BertTokenizer, 768, 'bert', "./pretrained_models/bert-base-multilingual-uncased"), # multilingual BERT (Wikipedia), 670MB
     'xlm-mlm-en-2048': (XLMModel, XLMTokenizer, 2048, 'xlm'),
-    'xlm-mlm-100-1280': (XLMModel, XLMTokenizer, 1280, 'xlm', "./pretrained_models/xlm-mlm-100-1280"), # multilingual LM (Wikipedia),
-    'roberta-base': (RobertaModel, RobertaTokenizer, 768, 'roberta', "./pretrained_models/roberta-base"),
+    'xlm-mlm-100-1280': (XLMModel, XLMTokenizer, 1280, 'xlm', "./pretrained_models/xlm-mlm-100-1280"), # multilingual LM (Wikipedia), 1.1GB
+    'roberta-base': (RobertaModel, RobertaTokenizer, 768, 'roberta', "./pretrained_models/roberta-base"), # English only...
     'roberta-large': (RobertaModel, RobertaTokenizer, 1024, 'roberta'),
     'distilbert-base-uncased': (DistilBertModel, DistilBertTokenizer, 768, 'bert'),
     'distilbert-base-multilingual-cased': (DistilBertModel, DistilBertTokenizer, 768, 'bert'),
-    'xlm-roberta-base': (XLMRobertaModel, XLMRobertaTokenizer, 768, 'roberta', "./pretrained_models/xlm-roberta-base"), # multilingual BERT (2.5TB of CommonCrawl),
+    'xlm-roberta-base': (XLMRobertaModel, XLMRobertaTokenizer, 768, 'roberta', "./pretrained_models/xlm-roberta-base"), # multilingual BERT (2.5TB of CommonCrawl), 1.1GB
     'xlm-roberta-large': (XLMRobertaModel, XLMRobertaTokenizer, 1024, 'roberta'),
     'albert-base-v1': (AlbertModel, AlbertTokenizer, 768, 'albert'),
     'albert-base-v2': (AlbertModel, AlbertTokenizer, 768, 'albert'),
